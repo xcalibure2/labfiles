@@ -1568,10 +1568,15 @@ function Mount-SmbShare {
             }
             $changePath = $Path.Substring(2)
             $changePath = $changePath.Substring($changePath.IndexOf("\"))
-            $finalPath = -join @("\\", $dc, $changePath)
+
+            # bricolage
+            #
+            #$finalPath = -join @("\\", $dc, $changePath)
+            Write-Host $PSBoundParameters["Credential"]
+            $finalPath = -join @("\\",(Get-Domain -Credential $PSBoundParameters["Credential"] ).Name, $changePath)
             
             if ($PSBoundParameters["Credential"]) {
-            
+                
                 $null = New-PSDrive -Name $ShareName -PSProvider FileSystem -Root $finalPath -Credential $Credential -Scope Global
             } else {
 
